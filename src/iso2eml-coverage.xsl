@@ -21,7 +21,7 @@
 <xsl:strip-space elements="*" />
 
 <!-- Match any geographic or temporal coverage elements -->
-<xsl:template match="gmd:extent">
+<xsl:template name="coverage" match="gmd:extent">
 	<!-- Add EML geographic and temporal coverages, if available -->
 	<coverage>
 		

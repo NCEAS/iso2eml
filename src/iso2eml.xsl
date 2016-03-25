@@ -17,6 +17,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
 
 <xsl:import href="iso2eml-party.xsl"/>
+<xsl:import href="iso2eml-coverage.xsl"/>
 
 <xsl:output method="xml" encoding="UTF-8" indent="yes" />
 <xsl:strip-space elements="*" />
@@ -58,19 +59,46 @@
         <abstract>
             <para><xsl:value-of select="normalize-space(gmd:identificationInfo/gmd:MD_DataIdentification/gmd:abstract/gco:CharacterString)" /></para>
         </abstract>
+
         
+		<!-- Add keywords -->
 		<keywordSet>    
         </keywordSet>
+
+		<!-- Add intelectual rights -->
         <intellectualRights>Rights</intellectualRights>
+
+		<!-- Add distribution -->
+
+		<!-- Add coverage -->
+		<xsl:call-template name="coverage">
+			<xsl:with-param name="coverage" select="." />
+		</xsl:call-template>
+			
+		<!-- Add the purpose -->
         <purpose>
             <para> </para>
         </purpose>
+
+		<!-- Add the contact -->
         <contact>
             <individualName>
                 <surName>Jones</surName>
             </individualName>                        
             <organizationName>NCEAS</organizationName>
         </contact>
+
+		
+		<!-- Add the publisher -->
+		
+		<!-- Add the pubPlace  -->
+		
+		<!-- Add the methods   -->
+		
+		<!-- Add the project   -->
+		
+		<!-- Add entities      -->
+		
     </dataset>
 </eml:eml>
 </xsl:template>
