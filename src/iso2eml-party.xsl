@@ -85,4 +85,60 @@
     </xsl:if>
 </xsl:template>
 
+<!-- Add creator -->
+<xsl:template name="creators">
+    <xsl:param name = "doc" />
+    <xsl:for-each select='$doc/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="author"]]'>
+        <creator>
+            <xsl:call-template name="party">
+                <xsl:with-param name="party" select = "." />
+            </xsl:call-template>
+        </creator>
+    </xsl:for-each>
+    <!-- TODO: ensure a creator exists after this foreach - some EOL data missing author -->
+</xsl:template>
+        
+<!-- Add contacts -->
+<xsl:template name="contacts">
+    <xsl:param name = "doc" />
+    <xsl:for-each select='$doc/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="pointOfContact"]]'>
+        <contact>
+            <xsl:call-template name="party">
+                <xsl:with-param name="party" select = "." />
+            </xsl:call-template>
+        </contact>
+    </xsl:for-each>
+    <!-- TODO: ensure a contact exists after this foreach  - some gateway data missing pointOfContact -->
+</xsl:template>
+
+<!-- Add associatedParty: principalInvestigator
+    First, check to see if principalInvestigators are listed in the gmd:citation, and if so, use them;
+    If not, then search the whole document and use any found.  This avoids duplication.
+-->
+<xsl:template name="principal-investigators">
+    <xsl:param name = "doc" />
+        <xsl:choose>
+            <xsl:when test='$doc/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="principalInvestigator"]]!=""'>
+                <xsl:for-each select='gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="principalInvestigator"]]'>
+                    <associatedParty>
+                        <xsl:call-template name="party">
+                            <xsl:with-param name="party" select = "." />
+                        </xsl:call-template>
+                        <role>principalInvestigator</role>
+                    </associatedParty>
+                </xsl:for-each>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:for-each select='$doc//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="principalInvestigator"]]'>
+                    <associatedParty>
+                        <xsl:call-template name="party">
+                            <xsl:with-param name="party" select = "." />
+                        </xsl:call-template>
+                        <role>principalInvestigator</role>
+                    </associatedParty>
+                </xsl:for-each>
+            </xsl:otherwise>
+        </xsl:choose>
+</xsl:template>
+
 </xsl:stylesheet>

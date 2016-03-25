@@ -36,15 +36,15 @@
         </xsl:for-each>
         
 		<!-- Add creators -->
-        <xsl:for-each select='gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="author"]]'>
-            <creator>
-                <xsl:call-template name="party">
-                    <xsl:with-param name="party" select = "." />
-                </xsl:call-template>
-            </creator>
-        </xsl:for-each>
-        <!-- TODO: ensure a creator exists after this foreach - some EOL data missing author -->
-        
+		<xsl:call-template name="creators">
+			<xsl:with-param name="doc" select="." />
+		</xsl:call-template>
+
+        <!-- Add additional PIs -->
+		<xsl:call-template name="principal-investigators">
+			<xsl:with-param name="doc" select="." />
+		</xsl:call-template>
+
 		<!-- Add the pubDate if available -->
 		<xsl:choose>
 			<xsl:when test="./gmd:dateStamp != ''">
@@ -56,7 +56,6 @@
         <abstract>
             <para><xsl:value-of select="normalize-space(gmd:identificationInfo/gmd:MD_DataIdentification/gmd:abstract/gco:CharacterString)" /></para>
         </abstract>
-
         
 		<!-- Add keywords -->
 		<keywordSet>    
@@ -77,15 +76,10 @@
             <para> </para>
         </purpose>
 
-        <!-- Add the contacts -->
-        <xsl:for-each select='gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="pointOfContact"]]'>
-            <contact>
-                <xsl:call-template name="party">
-                    <xsl:with-param name="party" select = "." />
-                </xsl:call-template>
-            </contact>
-        </xsl:for-each>
-        <!-- TODO: ensure a contact exists after this foreach  - some gateway data missing pointOfContact -->
+		<!-- Add contacts -->
+		<xsl:call-template name="contacts">
+			<xsl:with-param name="doc" select="." />
+		</xsl:call-template>
 
 		
 		<!-- Add the publisher -->
