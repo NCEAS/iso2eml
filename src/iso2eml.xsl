@@ -41,7 +41,7 @@
         </xsl:for-each>
         <pubDate></pubDate>           
         <abstract>
-            <para><literalLayout>Abstract here</literalLayout></para>
+            <para><xsl:value-of select="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:abstract/gco:CharacterString" /></para>
         </abstract>
         <keywordSet>    
         </keywordSet>
