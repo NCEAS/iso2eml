@@ -16,6 +16,8 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema" 
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
 
+<xsl:import href="iso2eml-party.xsl"/>
+
 <xsl:output method="xml" encoding="UTF-8" indent="yes" />
 <xsl:strip-space elements="*" />
 
@@ -71,46 +73,6 @@
         </contact>
     </dataset>
 </eml:eml>
-</xsl:template>
-
-<!-- Handle eml-party fields -->    
-<xsl:template name="party">
-    <xsl:param name = "party" />
-    <xsl:apply-templates />   
-    <phone><xsl:value-of select="normalize-space(//gmd:voice/gco:CharacterString)"/></phone>
-    <electronicMailAddress><xsl:value-of select="normalize-space(//gmd:CI_Address/gmd:electronicMailAddress/gco:CharacterString)"/></electronicMailAddress>
-</xsl:template>
-
-<!-- Add an individualName -->
-<xsl:template match="gmd:individualName">
-    <individualName>
-        <surName><xsl:value-of select="normalize-space(gco:CharacterString)"/></surName>
-    </individualName>
-</xsl:template>
-
-<!-- Add an organizationName -->
-<xsl:template match="gmd:organisationName">
-    <organizationName><xsl:value-of select="normalize-space(gco:CharacterString)"/></organizationName>
-</xsl:template>
-
-<!-- Add a positionName -->
-<xsl:template match="gmd:positionName">
-    <positionName><xsl:value-of select="normalize-space(gco:CharacterString)"/></positionName>
-</xsl:template>
-
-<!-- voice, email, and role are all noops so they can be reordered correctly -->
-<xsl:template match="gmd:voice" />
-<xsl:template match="gmd:electronicMailAddress" />
-<xsl:template match="gmd:role" />
-
-<xsl:template match="gmd:CI_Address"> 
-    <address>
-        <deliveryPoint><xsl:value-of select="normalize-space(gmd:deliveryPoint/gco:CharacterString)"/></deliveryPoint>
-        <city><xsl:value-of select="normalize-space(gmd:city/gco:CharacterString)"/></city>
-        <administrativeArea><xsl:value-of select="normalize-space(gmd:administrativeArea/gco:CharacterString)"/></administrativeArea>
-        <postalCode><xsl:value-of select="normalize-space(gmd:postalCode/gco:CharacterString)"/></postalCode>
-        <country><xsl:value-of select="normalize-space(gmd:country/gco:CharacterString)"/></country>
-    </address>
 </xsl:template>
 
 </xsl:stylesheet>
