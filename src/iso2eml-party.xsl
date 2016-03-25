@@ -23,8 +23,12 @@
 <xsl:template name="party">
     <xsl:param name = "party" />
     <xsl:apply-templates />   
-    <phone><xsl:value-of select="normalize-space(//gmd:voice/gco:CharacterString)"/></phone>
-    <electronicMailAddress><xsl:value-of select="normalize-space(//gmd:CI_Address/gmd:electronicMailAddress/gco:CharacterString)"/></electronicMailAddress>
+    <xsl:if test="//gmd:voice/gco:CharacterString!=''">
+        <phone><xsl:value-of select="normalize-space(//gmd:voice/gco:CharacterString)"/></phone>
+    </xsl:if>
+    <xsl:if test="//gmd:CI_Address/gmd:electronicMailAddress/gco:CharacterString!=''">
+        <electronicMailAddress><xsl:value-of select="normalize-space(//gmd:CI_Address/gmd:electronicMailAddress/gco:CharacterString)"/></electronicMailAddress>
+    </xsl:if>
 </xsl:template>
 
 <!-- Add an individualName -->
@@ -50,13 +54,25 @@
 <xsl:template match="gmd:role" />
 
 <xsl:template match="gmd:CI_Address"> 
+    <xsl:if test="//gmd:deliveryPoint/gco:CharacterString!='' or //gmd:city/gco:CharacterString!='' or //gmd:administrativeArea/gco:CharacterString!='' or //gmd:postalCode/gco:CharacterString!='' or //gmd:coutry/gco:CharacterString!=''">
     <address>
-        <deliveryPoint><xsl:value-of select="normalize-space(gmd:deliveryPoint/gco:CharacterString)"/></deliveryPoint>
-        <city><xsl:value-of select="normalize-space(gmd:city/gco:CharacterString)"/></city>
-        <administrativeArea><xsl:value-of select="normalize-space(gmd:administrativeArea/gco:CharacterString)"/></administrativeArea>
-        <postalCode><xsl:value-of select="normalize-space(gmd:postalCode/gco:CharacterString)"/></postalCode>
-        <country><xsl:value-of select="normalize-space(gmd:country/gco:CharacterString)"/></country>
+        <xsl:if test="//gmd:deliveryPoint/gco:CharacterString!=''">
+            <deliveryPoint><xsl:value-of select="normalize-space(gmd:deliveryPoint/gco:CharacterString)"/></deliveryPoint>
+        </xsl:if>
+        <xsl:if test="//gmd:city/gco:CharacterString!=''">
+            <city><xsl:value-of select="normalize-space(gmd:city/gco:CharacterString)"/></city>
+        </xsl:if>
+        <xsl:if test="//gmd:administrativeArea/gco:CharacterString!=''">
+            <administrativeArea><xsl:value-of select="normalize-space(gmd:administrativeArea/gco:CharacterString)"/></administrativeArea>
+        </xsl:if>
+        <xsl:if test="//gmd:postalCode/gco:CharacterString!=''">
+            <postalCode><xsl:value-of select="normalize-space(gmd:postalCode/gco:CharacterString)"/></postalCode>
+        </xsl:if>
+        <xsl:if test="//gmd:coutry/gco:CharacterString!=''">
+            <country><xsl:value-of select="normalize-space(gmd:country/gco:CharacterString)"/></country>
+        </xsl:if>
     </address>
+    </xsl:if>
 </xsl:template>
 
 </xsl:stylesheet>
