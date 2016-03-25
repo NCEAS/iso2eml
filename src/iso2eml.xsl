@@ -36,17 +36,14 @@
         </xsl:for-each>
         
 		<!-- Add creators -->
-		<xsl:for-each select='//gmd:CI_ResponsibleParty[
-            gmd:role/gmd:CI_RoleCode[@codeListValue="owner"] or 
-            gmd:role/gmd:CI_RoleCode[@codeListValue="originator"] or 
-            gmd:role/gmd:CI_RoleCode[@codeListValue="principalInvestigator"] or 
-            gmd:role/gmd:CI_RoleCode[@codeListValue="author"]]'>
+        <xsl:for-each select='gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="author"]]'>
             <creator>
                 <xsl:call-template name="party">
                     <xsl:with-param name="party" select = "." />
                 </xsl:call-template>
             </creator>
         </xsl:for-each>
+        <!-- TODO: ensure a creator exists after this foreach - some EOL data missing author -->
         
 		<!-- Add the pubDate if available -->
 		<xsl:choose>
@@ -80,13 +77,15 @@
             <para> </para>
         </purpose>
 
-		<!-- Add the contact -->
-        <contact>
-            <individualName>
-                <surName>Jones</surName>
-            </individualName>                        
-            <organizationName>NCEAS</organizationName>
-        </contact>
+        <!-- Add the contacts -->
+        <xsl:for-each select='gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="pointOfContact"]]'>
+            <contact>
+                <xsl:call-template name="party">
+                    <xsl:with-param name="party" select = "." />
+                </xsl:call-template>
+            </contact>
+        </xsl:for-each>
+        <!-- TODO: ensure a contact exists after this foreach  - some gateway data missing pointOfContact -->
 
 		
 		<!-- Add the publisher -->

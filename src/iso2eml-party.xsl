@@ -19,6 +19,11 @@
 <xsl:output method="xml" encoding="UTF-8" indent="yes" />
 <xsl:strip-space elements="*" />
 
+<!-- Some useful reference resources:
+     CI_ResponsibleParty: https://wiki.earthdata.nasa.gov/display/NASAISO/Individuals,+Organizations,+and+Roles
+     CI_RoleCode: https://geo-ide.noaa.gov/wiki/index.php?title=ISO_19115_and_19115-2_CodeList_Dictionaries#CI_RoleCode
+-->
+
 <!-- Handle eml-party fields -->    
 <xsl:template name="party">
     <xsl:param name = "party" />
@@ -28,6 +33,9 @@
     </xsl:if>
     <xsl:if test="//gmd:CI_Address/gmd:electronicMailAddress/gco:CharacterString!=''">
         <electronicMailAddress><xsl:value-of select="normalize-space(//gmd:CI_Address/gmd:electronicMailAddress/gco:CharacterString)"/></electronicMailAddress>
+    </xsl:if>
+    <xsl:if test="//gmd:onlineResource/gmd:CI_OnlineResource/gmd:linkage/gmd:URL!=''">
+        <onlineURL><xsl:value-of select="normalize-space(//gmd:onlineResource/gmd:CI_OnlineResource/gmd:linkage/gmd:URL)"/></onlineURL>
     </xsl:if>
 </xsl:template>
 
@@ -52,7 +60,9 @@
 <xsl:template match="gmd:voice" />
 <xsl:template match="gmd:electronicMailAddress" />
 <xsl:template match="gmd:role" />
+<xsl:template match="gmd:onlineResource" />
 
+<!-- Add an Address -->
 <xsl:template match="gmd:CI_Address"> 
     <xsl:if test="//gmd:deliveryPoint/gco:CharacterString!='' or //gmd:city/gco:CharacterString!='' or //gmd:administrativeArea/gco:CharacterString!='' or //gmd:postalCode/gco:CharacterString!='' or //gmd:coutry/gco:CharacterString!=''">
     <address>
