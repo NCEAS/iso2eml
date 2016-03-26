@@ -61,7 +61,7 @@
 		<keywordSet>    
         </keywordSet>
 
-		<!-- Add intelectual rights -->
+		<!-- Add intellectual rights -->
         <intellectualRights>Rights</intellectualRights>
 
 		<!-- Add distribution -->
@@ -71,11 +71,6 @@
 			<xsl:with-param name="coverage" select="." />
 		</xsl:call-template>
 			
-		<!-- Add the purpose -->
-        <purpose>
-            <para> </para>
-        </purpose>
-
 		<!-- Add contacts -->
 		<xsl:call-template name="contacts">
 			<xsl:with-param name="doc" select="." />

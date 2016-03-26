@@ -149,6 +149,7 @@
 <xsl:template name="additional-parties">
     <xsl:param name = "doc" />
     <!-- Roles to be handled: originator|principalInvestigator|resourceProvider|distributor -->
+
     <!-- principalInvestigators -->
     <xsl:choose>
         <xsl:when test='$doc/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="principalInvestigator"]]!=""'>
@@ -168,6 +169,54 @@
                         <xsl:with-param name="party" select = "." />
                     </xsl:call-template>
                     <role>principalInvestigator</role>
+                </associatedParty>
+            </xsl:for-each>
+        </xsl:otherwise>
+    </xsl:choose>
+
+    <!-- coPrincipalInvestigator -->
+    <xsl:choose>
+        <xsl:when test='$doc/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="coPrincipalInvestigator"]]!=""'>
+            <xsl:for-each select='gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="coPrincipalInvestigator"]]'>
+                <associatedParty>
+                    <xsl:call-template name="party">
+                        <xsl:with-param name="party" select = "." />
+                    </xsl:call-template>
+                    <role>coPrincipalInvestigator</role>
+                </associatedParty>
+            </xsl:for-each>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:for-each select='$doc//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="coPrincipalInvestigator"]]'>
+                <associatedParty>
+                    <xsl:call-template name="party">
+                        <xsl:with-param name="party" select = "." />
+                    </xsl:call-template>
+                    <role>coPrincipalInvestigator</role>
+                </associatedParty>
+            </xsl:for-each>
+        </xsl:otherwise>
+    </xsl:choose>
+
+    <!-- collaboratingPrincipalInvestigator -->
+    <xsl:choose>
+        <xsl:when test='$doc/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="collaboratingPrincipalInvestigator"]]!=""'>
+            <xsl:for-each select='gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="collaboratingPrincipalInvestigator"]]'>
+                <associatedParty>
+                    <xsl:call-template name="party">
+                        <xsl:with-param name="party" select = "." />
+                    </xsl:call-template>
+                    <role>collaboratingPrincipalInvestigator</role>
+                </associatedParty>
+            </xsl:for-each>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:for-each select='$doc//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="collaboratingPrincipalInvestigator"]]'>
+                <associatedParty>
+                    <xsl:call-template name="party">
+                        <xsl:with-param name="party" select = "." />
+                    </xsl:call-template>
+                    <role>collaboratingPrincipalInvestigator</role>
                 </associatedParty>
             </xsl:for-each>
         </xsl:otherwise>
