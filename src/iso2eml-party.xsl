@@ -88,26 +88,52 @@
 <!-- Add creator -->
 <xsl:template name="creators">
     <xsl:param name = "doc" />
-    <xsl:for-each select='$doc/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="author"]]'>
-        <creator>
-            <xsl:call-template name="party">
-                <xsl:with-param name="party" select = "." />
-            </xsl:call-template>
-        </creator>
-    </xsl:for-each>
+    <xsl:choose>
+        <xsl:when test='$doc/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="author"]]!=""'>
+            <xsl:for-each select='gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="author"]]'>
+                <creator>
+                    <xsl:call-template name="party">
+                        <xsl:with-param name="party" select = "." />
+                    </xsl:call-template>
+                </creator>
+            </xsl:for-each>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:for-each select='$doc//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="author"]]'>
+                <creator>
+                    <xsl:call-template name="party">
+                        <xsl:with-param name="party" select = "." />
+                    </xsl:call-template>
+                </creator>
+            </xsl:for-each>
+        </xsl:otherwise>
+    </xsl:choose>
     <!-- TODO: ensure a creator exists after this foreach - some EOL data missing author -->
 </xsl:template>
         
 <!-- Add contacts -->
 <xsl:template name="contacts">
     <xsl:param name = "doc" />
-    <xsl:for-each select='$doc/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="pointOfContact"]]'>
-        <contact>
-            <xsl:call-template name="party">
-                <xsl:with-param name="party" select = "." />
-            </xsl:call-template>
-        </contact>
-    </xsl:for-each>
+    <xsl:choose>
+        <xsl:when test='$doc/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="pointOfContact"]]!=""'>
+            <xsl:for-each select='gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="pointOfContact"]]'>
+                <contact>
+                    <xsl:call-template name="party">
+                        <xsl:with-param name="party" select = "." />
+                    </xsl:call-template>
+                </contact>
+            </xsl:for-each>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:for-each select='$doc//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="contact"]]'>
+                <contact>
+                    <xsl:call-template name="party">
+                        <xsl:with-param name="party" select = "." />
+                    </xsl:call-template>
+                </contact>
+            </xsl:for-each>
+        </xsl:otherwise>
+    </xsl:choose>
     <!-- TODO: ensure a contact exists after this foreach  - some gateway data missing pointOfContact -->
 </xsl:template>
 
