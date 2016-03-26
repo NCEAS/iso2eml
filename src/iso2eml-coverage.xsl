@@ -139,20 +139,41 @@
 	<!-- Handle temporal coverage elements -->
 	<xsl:template name="temporalCoverage" match="gmd:EX_Extent/gmd:temporalElement">
 		<xsl:comment>Temporal coverage</xsl:comment>
-		<temporalCoverage>
-			<rangeOfDates>
-				<beginDate>
-					<calendarDate>
-						<xsl:value-of select="normalize-space(gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:beginPosition)" />
-					</calendarDate>
-				</beginDate>
-				<endDate>
-					<calendarDate>
-						<xsl:value-of select="normalize-space(gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:endPosition)" />
-					</calendarDate>
-				</endDate>
-			</rangeOfDates>
-		</temporalCoverage>
+		<xsl:choose>
+			<xsl:when test="gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod">
+				
+				<!-- We have a period, use rangeOfDates -->
+				<temporalCoverage>
+					<rangeOfDates>
+						<beginDate>
+							<calendarDate>
+								<xsl:value-of select="normalize-space(gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:beginPosition)" />
+							</calendarDate>
+						</beginDate>
+						<endDate>
+							<calendarDate>
+								<xsl:value-of select="normalize-space(gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:endPosition)" />
+							</calendarDate>
+						</endDate>
+					</rangeOfDates>
+				</temporalCoverage>
+			</xsl:when>
+			<xsl:otherwise>
+				
+				<!-- No time period, look for time instant -->
+				<xsl:if test="gmd:EX_TemporalExtent/gmd:extent/gml:TimeInstant">
+					
+					<temporalCoverage>
+						<singleDateTime>
+							<calendarDate>
+								<xsl:value-of select="normalize-space(gmd:EX_TemporalExtent/gmd:extent/gml:TimeInstant/gml:timePosition)" />
+							</calendarDate>
+						</singleDateTime>
+					</temporalCoverage>
+					
+				</xsl:if>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 
 </xsl:stylesheet>
