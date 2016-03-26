@@ -67,9 +67,7 @@
 		<!-- Add distribution -->
 
 		<!-- Add coverage -->
-		<xsl:call-template name="coverage">
-			<xsl:with-param name="coverage" select="." />
-		</xsl:call-template>
+		<xsl:call-template name="coverage" />
 			
 		<!-- Add contacts -->
 		<xsl:call-template name="contacts">
