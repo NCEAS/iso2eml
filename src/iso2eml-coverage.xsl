@@ -146,14 +146,38 @@
 				<temporalCoverage>
 					<rangeOfDates>
 						<beginDate>
-							<calendarDate>
-								<xsl:value-of select="normalize-space(gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:beginPosition)" />
-							</calendarDate>
+							<xsl:choose>
+								<xsl:when test="contains(gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:beginPosition, 'T')">
+									<calendarDate>
+										<xsl:value-of select="normalize-space(substring-before(gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:beginPosition, 'T'))" />
+									</calendarDate>
+									<time>
+										<xsl:value-of select="normalize-space(substring-after(gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:beginPosition, 'T'))" />									
+									</time>								
+								</xsl:when>
+								<xsl:otherwise>
+									<calendarDate>
+										<xsl:value-of select="normalize-space(gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:beginPosition)" />
+									</calendarDate>								
+								</xsl:otherwise>
+							</xsl:choose>
 						</beginDate>
 						<endDate>
-							<calendarDate>
-								<xsl:value-of select="normalize-space(gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:endPosition)" />
-							</calendarDate>
+							<xsl:choose>
+								<xsl:when test="contains(gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:endPosition, 'T')">
+									<calendarDate>
+										<xsl:value-of select="normalize-space(substring-before(gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:endPosition, 'T'))" />
+									</calendarDate>
+									<time>
+										<xsl:value-of select="normalize-space(substring-after(gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:endPosition, 'T'))" />									
+									</time>								
+								</xsl:when>
+								<xsl:otherwise>
+									<calendarDate>
+										<xsl:value-of select="normalize-space(gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:endPosition)" />
+									</calendarDate>								
+								</xsl:otherwise>
+							</xsl:choose>
 						</endDate>
 					</rangeOfDates>
 				</temporalCoverage>
