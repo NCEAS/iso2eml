@@ -40,8 +40,8 @@
 			<xsl:with-param name="doc" select="." />
 		</xsl:call-template>
 
-        <!-- Add additional PIs -->
-		<xsl:call-template name="principal-investigators">
+        <!-- Add additional parties -->
+		<xsl:call-template name="additional-parties">
 			<xsl:with-param name="doc" select="." />
 		</xsl:call-template>
 
@@ -83,6 +83,10 @@
 
 		
 		<!-- Add the publisher -->
+		<xsl:call-template name="publishers">
+			<xsl:with-param name="doc" select="." />
+		</xsl:call-template>
+
 		
 		<!-- Add the pubPlace  -->
 		

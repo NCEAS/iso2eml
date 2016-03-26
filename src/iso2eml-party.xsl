@@ -111,34 +111,91 @@
     <!-- TODO: ensure a contact exists after this foreach  - some gateway data missing pointOfContact -->
 </xsl:template>
 
+
+<!-- Add publishers
+    First, check to see if publishers are listed in the gmd:citation, and if so, use them;
+    If not, then search the whole document and use any found.  This avoids duplication.
+-->
+<xsl:template name="publishers">
+    <xsl:param name = "doc" />
+    <!-- publisher -->
+    <xsl:choose>
+        <xsl:when test='$doc/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="publisher"]]!=""'>
+            <xsl:for-each select='gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="publisher"]]'>
+                <publisher>
+                    <xsl:call-template name="party">
+                        <xsl:with-param name="party" select = "." />
+                    </xsl:call-template>
+                </publisher>
+            </xsl:for-each>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:for-each select='$doc//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="publisher"]]'>
+                <publisher>
+                    <xsl:call-template name="party">
+                        <xsl:with-param name="party" select = "." />
+                    </xsl:call-template>
+                </publisher>
+            </xsl:for-each>
+        </xsl:otherwise>
+    </xsl:choose>
+</xsl:template>
+
+
 <!-- Add associatedParty: principalInvestigator
     First, check to see if principalInvestigators are listed in the gmd:citation, and if so, use them;
     If not, then search the whole document and use any found.  This avoids duplication.
 -->
-<xsl:template name="principal-investigators">
+<xsl:template name="additional-parties">
     <xsl:param name = "doc" />
-        <xsl:choose>
-            <xsl:when test='$doc/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="principalInvestigator"]]!=""'>
-                <xsl:for-each select='gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="principalInvestigator"]]'>
-                    <associatedParty>
-                        <xsl:call-template name="party">
-                            <xsl:with-param name="party" select = "." />
-                        </xsl:call-template>
-                        <role>principalInvestigator</role>
-                    </associatedParty>
-                </xsl:for-each>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:for-each select='$doc//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="principalInvestigator"]]'>
-                    <associatedParty>
-                        <xsl:call-template name="party">
-                            <xsl:with-param name="party" select = "." />
-                        </xsl:call-template>
-                        <role>principalInvestigator</role>
-                    </associatedParty>
-                </xsl:for-each>
-            </xsl:otherwise>
-        </xsl:choose>
+    <!-- Roles to be handled: originator|principalInvestigator|resourceProvider|distributor -->
+    <!-- principalInvestigators -->
+    <xsl:choose>
+        <xsl:when test='$doc/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="principalInvestigator"]]!=""'>
+            <xsl:for-each select='gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="principalInvestigator"]]'>
+                <associatedParty>
+                    <xsl:call-template name="party">
+                        <xsl:with-param name="party" select = "." />
+                    </xsl:call-template>
+                    <role>principalInvestigator</role>
+                </associatedParty>
+            </xsl:for-each>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:for-each select='$doc//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="principalInvestigator"]]'>
+                <associatedParty>
+                    <xsl:call-template name="party">
+                        <xsl:with-param name="party" select = "." />
+                    </xsl:call-template>
+                    <role>principalInvestigator</role>
+                </associatedParty>
+            </xsl:for-each>
+        </xsl:otherwise>
+    </xsl:choose>
+
+    <!-- originators -->
+    <xsl:choose>
+        <xsl:when test='$doc/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="originator"]]!=""'>
+            <xsl:for-each select='gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="originator"]]'>
+                <associatedParty>
+                    <xsl:call-template name="party">
+                        <xsl:with-param name="party" select = "." />
+                    </xsl:call-template>
+                    <role>originator</role>
+                </associatedParty>
+            </xsl:for-each>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:for-each select='$doc//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="originator"]]'>
+                <associatedParty>
+                    <xsl:call-template name="party">
+                        <xsl:with-param name="party" select = "." />
+                    </xsl:call-template>
+                    <role>originator</role>
+                </associatedParty>
+            </xsl:for-each>
+        </xsl:otherwise>
+    </xsl:choose>
 </xsl:template>
 
 </xsl:stylesheet>
