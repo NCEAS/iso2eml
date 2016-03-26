@@ -9,7 +9,7 @@ EMLBASE="eml-0"
 
 mkdir -p $TARGET
 
-for num in 1 2 3 4 5 6 7 8
+for num in 1 2 3 4 5 6 7 8 9
 do
     xml tr src/iso2eml.xsl $TEST/$ISOBASE${num}.xml > $TARGET/${EMLBASE}${num}.xml
 done
