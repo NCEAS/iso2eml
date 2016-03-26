@@ -17,35 +17,72 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema" 
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
 
-<xsl:output method="xml" encoding="UTF-8" indent="yes" />
-<xsl:strip-space elements="*" />
-
-<!-- Match any geographic or temporal coverage elements -->
-<xsl:template name="coverage" match="gmd:extent">
-	<!-- Add EML geographic and temporal coverages, if available -->
-	<coverage>
+	<xsl:output method="xml" encoding="UTF-8" indent="yes" />
+	<xsl:strip-space elements="*" />
+	
+	<!-- Match any geographic or temporal coverage elements -->
+	<xsl:template name="coverage" match="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent">
+		<!-- Add EML geographic and temporal coverages, if available -->
+		<coverage>
+			<!-- Add geographic coverages -->
+			<xsl:apply-templates select=".//gmd:EX_Extent/gmd:geographicElement" />
+			
+			<!-- Add temporal coverages -->
+			<xsl:apply-templates select=".//gmd:EX_Extent/gmd:temporalElement" />
+			
+		</coverage>
+	</xsl:template>
+	
+	<!-- Handle geographic coverage elements -->
+	<xsl:template name="geographicCoverage" match="gmd:EX_Extent/gmd:geographicElement">
+		<xsl:comment>Geographic coverage</xsl:comment>
 		
-		<!-- Add geographic coverages -->
-		<xsl:call-template name="geographicCoverage">
-            <xsl:with-param name="geographicCoverage" select = "." />
-		</xsl:call-template>
+		<!-- Handle geographic description -->
+		<geographicCoverage>
+			<geographicDescription>
+				<xsl:value-of select=".//gmd:geographicIdentifier/gmd:MD_Identifier/gmd:code/gco:CharacterString" />
+			</geographicDescription>
+			<xsl:apply-templates select=".//gmd:EX_GeographicBoundingBox" />
+		</geographicCoverage>
+	</xsl:template>
+	
+	<!-- Handle geographic bounding boxes -->
+	<xsl:template name="boundingCoordinates" match="gmd:EX_GeographicBoundingBox">
 		
-		<!-- Add temporal coverages -->
-		<xsl:call-template name="temporalCoverage">
-            <xsl:with-param name="temporalCoverage" select = "." />
-		</xsl:call-template>
-		
-	</coverage>
-</xsl:template>
-
-<!-- Handle geographic coverage elements -->
-<xsl:template name="geographicCoverage">
-	<xsl:comment>Geographic coverage</xsl:comment>
-</xsl:template>
-
-<!-- Handle temporal coverage elements -->
-<xsl:template name="temporalCoverage">
-	<xsl:comment>Temporal coverage</xsl:comment>
-</xsl:template>
+		<!-- Add bounding coordinates -->
+		<boundingCoordinates>
+			<westBoundingCoordinate>
+				<xsl:value-of select="normalize-space(gmd:westBoundLongitude/gco:Decimal)" />
+			</westBoundingCoordinate>
+			<eastBoundingCoordinate>
+				<xsl:value-of select="normalize-space(gmd:eastBoundLongitude/gco:Decimal)" />
+			</eastBoundingCoordinate>
+			<northBoundingCoordinate>
+				<xsl:value-of select="normalize-space(gmd:northBoundLatitude/gco:Decimal)" />
+			</northBoundingCoordinate>
+			<southBoundingCoordinate>
+				<xsl:value-of select="normalize-space(gmd:southBoundLatitude/gco:Decimal)" />
+			</southBoundingCoordinate>
+		</boundingCoordinates>
+	</xsl:template>
+	
+	<!-- Handle temporal coverage elements -->
+	<xsl:template name="temporalCoverage" match="gmd:EX_Extent/gmd:temporalElement">
+		<xsl:comment>Temporal coverage</xsl:comment>
+		<temporalCoverage>
+			<rangeOfDates>
+				<beginDate>
+					<calendarDate>
+						<xsl:value-of select="gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:beginPosition" />
+					</calendarDate>
+				</beginDate>
+				<endDate>
+					<calendarDate>
+						<xsl:value-of select="gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:endPosition" />
+					</calendarDate>
+				</endDate>
+			</rangeOfDates>
+		</temporalCoverage>
+	</xsl:template>
 
 </xsl:stylesheet>
