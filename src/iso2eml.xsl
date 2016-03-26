@@ -46,11 +46,14 @@
 		</xsl:call-template>
 
 		<!-- Add the pubDate if available -->
-		<xsl:choose>
-			<xsl:when test="./gmd:dateStamp != ''">
-				<pubDate><xsl:value-of select="normalize-space(gmd:dateStamp)" /></pubDate>           
-			</xsl:when>
-		</xsl:choose>
+			<xsl:if test="gmd:dateStamp/gco:DateTime != ''">
+				<pubDate><xsl:value-of select="normalize-space(gmd:dateStamp/gco:DateTime)" /></pubDate>           
+			</xsl:if>
+			
+		<!-- Add the language -->
+		<xsl:if test="gmd:language/gco:CharacterString != ''">
+			<language><xsl:value-of select="normalize-space(gmd:language/gco:CharacterString)" /></language>           
+		</xsl:if>
 		
 		<!-- Add the abstract -->
         <abstract>
