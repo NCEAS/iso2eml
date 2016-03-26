@@ -26,106 +26,106 @@
 <eml:eml>
     <xsl:attribute name="xsi:schemaLocation">eml://ecoinformatics.org/eml-2.1.1 ~/development/eml/eml.xsd</xsl:attribute>
     <!-- Add the packageId -->
-	<xsl:attribute name="packageId"><xsl:value-of select="normalize-space(gmd:fileIdentifier/gco:CharacterString)"/></xsl:attribute>
+    <xsl:attribute name="packageId"><xsl:value-of select="normalize-space(gmd:fileIdentifier/gco:CharacterString)"/></xsl:attribute>
     <xsl:attribute name="system"><xsl:value-of select="'knb'"/></xsl:attribute>
     <xsl:attribute name="scope"><xsl:value-of select="'system'"/></xsl:attribute>
     <dataset>
         <!-- Add the title -->
-		<xsl:for-each select="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString">
+        <xsl:for-each select="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString">
             <title><xsl:value-of select="normalize-space(.)"/></title>
         </xsl:for-each>
         
-		<!-- Add creators -->
-		<xsl:call-template name="creators">
-			<xsl:with-param name="doc" select="." />
-		</xsl:call-template>
+        <!-- Add creators -->
+        <xsl:call-template name="creators">
+            <xsl:with-param name="doc" select="." />
+        </xsl:call-template>
 
         <!-- Add additional parties -->
-		<xsl:call-template name="additional-parties">
-			<xsl:with-param name="doc" select="." />
-		</xsl:call-template>
+        <xsl:call-template name="additional-parties">
+            <xsl:with-param name="doc" select="." />
+        </xsl:call-template>
 
-		<!-- Add the pubDate if available -->
-			<xsl:if test="gmd:dateStamp/gco:DateTime != ''">
-				<pubDate><xsl:value-of select="normalize-space(gmd:dateStamp/gco:DateTime)" /></pubDate>           
-			</xsl:if>
-			
-		<!-- Add the language -->
-		<xsl:if test="gmd:language/gco:CharacterString != ''">
-			<language><xsl:value-of select="normalize-space(gmd:language/gco:CharacterString)" /></language>           
-		</xsl:if>
-		
-		<!-- Add the abstract -->
+        <!-- Add the pubDate if available -->
+            <xsl:if test="gmd:dateStamp/gco:DateTime != ''">
+                <pubDate><xsl:value-of select="normalize-space(gmd:dateStamp/gco:DateTime)" /></pubDate>           
+            </xsl:if>
+            
+        <!-- Add the language -->
+        <xsl:if test="gmd:language/gco:CharacterString != ''">
+            <language><xsl:value-of select="normalize-space(gmd:language/gco:CharacterString)" /></language>           
+        </xsl:if>
+        
+        <!-- Add the abstract -->
         <abstract>
             <para><xsl:value-of select="normalize-space(gmd:identificationInfo/gmd:MD_DataIdentification/gmd:abstract/gco:CharacterString)" /></para>
         </abstract>
         
-		<!-- Add keywords -->
+        <!-- Add keywords -->
         <xsl:if test="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords != ''">
-		    <xsl:call-template name="keywords">
+            <xsl:call-template name="keywords">
                 <xsl:with-param name="keys" select="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords" />
-		    </xsl:call-template>
-		</xsl:if>
+            </xsl:call-template>
+        </xsl:if>
 
-		<!-- Add intellectual rights -->
-		<!-- 
-			Note these rules are specific to the arcticdata.io content, 
-			and will need to be generalized
-		-->
-		<xsl:choose>
-			<xsl:when test="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_Constraints/gmd:useLimitation">
-				<!-- Transfer MD_Constraints/useLimitation directly -->
-		        <intellectualRights>
-	                <para>
-						<xsl:value-of select="normalize-space(gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_Constraints/gmd:useLimitation/gco:CharacterString)" />
-	                </para>
-		        </intellectualRights>
-			</xsl:when>
-			<xsl:when test="contains(gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/gmd:otherConstraints/gco:CharacterString,'Access Constraints: No Access Constraints. Use Constraints: No Use Constraints.')">
-				<!-- Assign CC-0 for MD_LegalConstraints/otherConstraints -->
-		        <intellectualRights>
-	                <para>
-		                <xsl:text>This work is dedicated to the public domain under the Creative Commons Universal 1.0 Public Domain Dedication. To view a copy of this dedication, visit https://creativecommons.org/publicdomain/zero/1.0/.</xsl:text>
-	                </para>
-		        </intellectualRights>
-			</xsl:when>
-			<xsl:otherwise>
-				
-				<!-- Assign a CC-BY license -->
-		        <intellectualRights>
-	                <para>
-	                	<xsl:text>This work is licensed under the Creative Commons Attribution 4.0 International License.To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/.</xsl:text>
-	                </para>
-		        </intellectualRights>
-				
-			</xsl:otherwise>
-		</xsl:choose>
+        <!-- Add intellectual rights -->
+        <!-- 
+            Note these rules are specific to the arcticdata.io content, 
+            and will need to be generalized
+        -->
+        <xsl:choose>
+            <xsl:when test="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_Constraints/gmd:useLimitation">
+                <!-- Transfer MD_Constraints/useLimitation directly -->
+                <intellectualRights>
+                    <para>
+                        <xsl:value-of select="normalize-space(gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_Constraints/gmd:useLimitation/gco:CharacterString)" />
+                    </para>
+                </intellectualRights>
+            </xsl:when>
+            <xsl:when test="contains(gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/gmd:otherConstraints/gco:CharacterString,'Access Constraints: No Access Constraints. Use Constraints: No Use Constraints.')">
+                <!-- Assign CC-0 for MD_LegalConstraints/otherConstraints -->
+                <intellectualRights>
+                    <para>
+                        <xsl:text>This work is dedicated to the public domain under the Creative Commons Universal 1.0 Public Domain Dedication. To view a copy of this dedication, visit https://creativecommons.org/publicdomain/zero/1.0/.</xsl:text>
+                    </para>
+                </intellectualRights>
+            </xsl:when>
+            <xsl:otherwise>
+                
+                <!-- Assign a CC-BY license -->
+                <intellectualRights>
+                    <para>
+                        <xsl:text>This work is licensed under the Creative Commons Attribution 4.0 International License.To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/.</xsl:text>
+                    </para>
+                </intellectualRights>
+                
+            </xsl:otherwise>
+        </xsl:choose>
 
-		<!-- Add distribution -->
+        <!-- Add distribution -->
 
-		<!-- Add coverage -->
-		<xsl:call-template name="coverage" />
-			
-		<!-- Add contacts -->
-		<xsl:call-template name="contacts">
-			<xsl:with-param name="doc" select="." />
-		</xsl:call-template>
+        <!-- Add coverage -->
+        <xsl:call-template name="coverage" />
+            
+        <!-- Add contacts -->
+        <xsl:call-template name="contacts">
+            <xsl:with-param name="doc" select="." />
+        </xsl:call-template>
 
-		
-		<!-- Add the publisher -->
-		<xsl:call-template name="publishers">
-			<xsl:with-param name="doc" select="." />
-		</xsl:call-template>
+        
+        <!-- Add the publisher -->
+        <xsl:call-template name="publishers">
+            <xsl:with-param name="doc" select="." />
+        </xsl:call-template>
 
-		
-		<!-- Add the pubPlace  -->
-		
-		<!-- Add the methods   -->
-		
-		<!-- Add the project   -->
-		
-		<!-- Add entities      -->
-		
+        
+        <!-- Add the pubPlace  -->
+        
+        <!-- Add the methods   -->
+        
+        <!-- Add the project   -->
+        
+        <!-- Add entities      -->
+        
     </dataset>
 </eml:eml>
 </xsl:template>
@@ -135,7 +135,7 @@
     <xsl:param name = "keys" />
     <xsl:for-each select="$keys">
         <xsl:variable name="kw-type" select="./gmd:MD_Keywords/gmd:type/gmd:MD_KeywordTypeCode/@codeListValue" />
-		<keywordSet>    
+        <keywordSet>    
             <xsl:for-each select="./gmd:MD_Keywords/gmd:keyword/gco:CharacterString">
                 <keyword>
                     <xsl:if test="$kw-type != ''">
