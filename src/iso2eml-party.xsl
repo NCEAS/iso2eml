@@ -35,7 +35,7 @@
         <electronicMailAddress><xsl:value-of select="normalize-space($party//gmd:CI_Address/gmd:electronicMailAddress/gco:CharacterString)"/></electronicMailAddress>
     </xsl:if>
     <xsl:if test="$party//gmd:onlineResource/gmd:CI_OnlineResource/gmd:linkage/gmd:URL!=''">
-        <onlineURL><xsl:value-of select="normalize-space($party//gmd:onlineResource/gmd:CI_OnlineResource/gmd:linkage/gmd:URL)"/></onlineURL>
+        <onlineUrl><xsl:value-of select="normalize-space($party//gmd:onlineResource/gmd:CI_OnlineResource/gmd:linkage/gmd:URL)"/></onlineUrl>
     </xsl:if>
 </xsl:template>
 
