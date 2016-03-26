@@ -138,7 +138,11 @@
         <keywordSet>    
             <xsl:for-each select="./gmd:MD_Keywords/gmd:keyword/gco:CharacterString">
                 <keyword>
-                    <xsl:if test="$kw-type != ''">
+                    <!-- ISO: discipline, place, stratum, temporal, theme -->
+                    <!-- EML:             place, stratum, temporal, theme, taxonomic -->
+                    <xsl:if test="$kw-type != '' and (
+                        $kw-type = 'place' or $kw-type = 'stratum' or 
+                        $kw-type = 'temporal' or $kw-type = 'theme')">
                         <xsl:attribute name="keywordType"><xsl:value-of select="normalize-space($kw-type)"/></xsl:attribute>
                     </xsl:if>
                     <xsl:value-of select="normalize-space(.)" />
