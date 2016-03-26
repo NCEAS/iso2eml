@@ -62,7 +62,38 @@
         </keywordSet>
 
 		<!-- Add intellectual rights -->
-        <intellectualRights>Rights</intellectualRights>
+		<!-- 
+			Note these rules are specific to the arcticdata.io content, 
+			and will need to be generalized
+		-->
+		<xsl:choose>
+			<xsl:when test="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_Constraints/gmd:useLimitation">
+				<!-- Transfer MD_Constraints/useLimitation directly -->
+		        <intellectualRights>
+	                <para>
+						<xsl:value-of select="normalize-space(gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_Constraints/gmd:useLimitation/gco:CharacterString)" />
+	                </para>
+		        </intellectualRights>
+			</xsl:when>
+			<xsl:when test="contains(gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/gmd:otherConstraints/gco:CharacterString,'Access Constraints: No Access Constraints. Use Constraints: No Use Constraints.')">
+				<!-- Assign CC-0 for MD_LegalConstraints/otherConstraints -->
+		        <intellectualRights>
+	                <para>
+		                <xsl:text>This work is dedicated to the public domain under the Creative Commons Universal 1.0 Public Domain Dedication. To view a copy of this dedication, visit https://creativecommons.org/publicdomain/zero/1.0/.</xsl:text>
+	                </para>
+		        </intellectualRights>
+			</xsl:when>
+			<xsl:otherwise>
+				
+				<!-- Assign a CC-BY license -->
+		        <intellectualRights>
+	                <para>
+	                	<xsl:text>This work is licensed under the Creative Commons Attribution 4.0 International License.To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/.</xsl:text>
+	                </para>
+		        </intellectualRights>
+				
+			</xsl:otherwise>
+		</xsl:choose>
 
 		<!-- Add distribution -->
 
