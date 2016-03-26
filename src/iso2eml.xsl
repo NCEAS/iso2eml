@@ -61,8 +61,11 @@
         </abstract>
         
 		<!-- Add keywords -->
-		<keywordSet>    
-        </keywordSet>
+        <xsl:if test="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords != ''">
+		    <xsl:call-template name="keywords">
+                <xsl:with-param name="keys" select="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords" />
+		    </xsl:call-template>
+		</xsl:if>
 
 		<!-- Add intellectual rights -->
 		<!-- 
@@ -127,4 +130,35 @@
 </eml:eml>
 </xsl:template>
 
+<!-- Process Keywords and associated thesuarus entries -->
+<xsl:template name="keywords">
+    <xsl:param name = "keys" />
+    <xsl:for-each select="$keys">
+        <xsl:variable name="kw-type" select="./gmd:MD_Keywords/gmd:type/gmd:MD_KeywordTypeCode/@codeListValue" />
+		<keywordSet>    
+            <xsl:for-each select="./gmd:MD_Keywords/gmd:keyword/gco:CharacterString">
+                <keyword>
+                    <xsl:if test="$kw-type != ''">
+                        <xsl:attribute name="keywordType"><xsl:value-of select="normalize-space($kw-type)"/></xsl:attribute>
+                    </xsl:if>
+                    <xsl:value-of select="normalize-space(.)" />
+                </keyword>
+            </xsl:for-each>
+            <xsl:if test="./gmd:MD_Keywords/gmd:thesaurusName != ''">
+                <xsl:choose>
+                    <xsl:when test="./gmd:MD_Keywords/gmd:thesaurusName/gmd:CI_Citation/gmd:collectiveTitle != ''">
+                        <keywordThesaurus>
+                            <xsl:value-of select="normalize-space(./gmd:MD_Keywords/gmd:thesaurusName/gmd:CI_Citation/gmd:collectiveTitle/gco:CharacterString)" />
+                        </keywordThesaurus>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <keywordThesaurus>
+                            <xsl:value-of select="normalize-space(./gmd:MD_Keywords/gmd:thesaurusName/gmd:CI_Citation/gmd:title/gco:CharacterString)" />
+                        </keywordThesaurus>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:if>
+        </keywordSet>
+    </xsl:for-each>
+</xsl:template>
 </xsl:stylesheet>
