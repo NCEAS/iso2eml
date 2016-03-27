@@ -89,6 +89,7 @@
 <xsl:template name="creators">
     <xsl:param name = "doc" />
     <xsl:choose>
+        <!-- First add any authors from the gmd:citation -->
         <xsl:when test='$doc/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="author"]]!=""'>
             <xsl:for-each select='gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="author"]]'>
                 <creator>
@@ -98,7 +99,8 @@
                 </creator>
             </xsl:for-each>
         </xsl:when>
-        <xsl:otherwise>
+        <!-- Alternatively, add authors from anywhere in the document -->
+        <xsl:when test='$doc//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="author"]] != "" '>
             <xsl:for-each select='$doc//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="author"]]'>
                 <creator>
                     <xsl:call-template name="party">
@@ -106,9 +108,24 @@
                     </xsl:call-template>
                 </creator>
             </xsl:for-each>
+        </xsl:when>
+        <!-- Alternatively, add principalInvestigators from anywhere in the document -->
+        <xsl:when test='$doc//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="principalInvestigator"]] != "" '>
+            <xsl:for-each select='$doc//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="principalInvestigator"]]'>
+                <creator>
+                    <xsl:call-template name="party">
+                        <xsl:with-param name="party" select = "." />
+                    </xsl:call-template>
+                </creator>
+            </xsl:for-each>
+        </xsl:when>
+        <!-- Finally, if all else fails, add the Arctic Data Center -->
+        <xsl:otherwise>
+            <creator>
+                <organizationName>NSF Arctic Data Center</organizationName>
+            </creator>
         </xsl:otherwise>
     </xsl:choose>
-    <!-- TODO: ensure a creator exists after this foreach - some EOL data missing author -->
 </xsl:template>
         
 <!-- Add contacts -->
@@ -124,17 +141,31 @@
                 </contact>
             </xsl:for-each>
         </xsl:when>
-        <xsl:otherwise>
-            <xsl:for-each select='$doc//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="contact"]]'>
+        <!-- Alternatively, add contacts from anywhere in the document -->
+        <xsl:when test='$doc//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="pointOfContact"]] != "" '>
+            <xsl:for-each select='$doc//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="pointOfContact"]]'>
                 <contact>
                     <xsl:call-template name="party">
                         <xsl:with-param name="party" select = "." />
                     </xsl:call-template>
                 </contact>
             </xsl:for-each>
+        </xsl:when>
+        <!-- Alternatively, add the first author as a contact -->
+        <xsl:when test='$doc//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="author"]] != "" '>
+            <contact>
+                <xsl:call-template name="party">
+                    <xsl:with-param name="party" select = '$doc//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="author"]][1]' />
+                </xsl:call-template>
+            </contact>
+        </xsl:when>
+        <!-- Finally, if all else fails, add the Arctic Data Center -->
+        <xsl:otherwise>
+            <contact>
+                <organizationName>NSF Arctic Data Center</organizationName>
+            </contact>
         </xsl:otherwise>
     </xsl:choose>
-    <!-- TODO: ensure a contact exists after this foreach  - some gateway data missing pointOfContact -->
 </xsl:template>
 
 
