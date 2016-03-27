@@ -152,6 +152,7 @@
             </xsl:for-each>
         </xsl:when>
         <!-- Alternatively, add the first author as a contact -->
+        <!--
         <xsl:when test='$doc//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="author"]] != "" '>
             <contact>
                 <xsl:call-template name="party">
@@ -159,6 +160,7 @@
                 </xsl:call-template>
             </contact>
         </xsl:when>
+        -->
         <!-- Finally, if all else fails, add the Arctic Data Center -->
         <xsl:otherwise>
             <contact>
