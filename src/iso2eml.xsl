@@ -90,14 +90,6 @@
                     </para>
                 </intellectualRights>
             </xsl:when>
-            <xsl:when test="contains(gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/gmd:otherConstraints/gco:CharacterString,'Access Constraints: No Access Constraints. Use Constraints: No Use Constraints.')">
-                <!-- Assign CC-0 for MD_LegalConstraints/otherConstraints -->
-                <intellectualRights>
-                    <para>
-                        <xsl:text>This work is dedicated to the public domain under the Creative Commons Universal 1.0 Public Domain Dedication. To view a copy of this dedication, visit https://creativecommons.org/publicdomain/zero/1.0/.</xsl:text>
-                    </para>
-                </intellectualRights>
-            </xsl:when>
             <xsl:otherwise>
                 
                 <!-- Assign a CC-BY license -->
