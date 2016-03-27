@@ -46,9 +46,18 @@
         </xsl:call-template>
 
         <!-- Add the pubDate if available -->
-            <xsl:if test="gmd:dateStamp/gco:DateTime != ''">
-                <pubDate><xsl:value-of select="normalize-space(gmd:dateStamp/gco:DateTime)" /></pubDate>           
-            </xsl:if>
+        <xsl:if test="gmd:dateStamp/gco:DateTime != ''">
+            <pubDate>
+                <xsl:choose>
+                    <xsl:when test="contains(gmd:dateStamp/gco:DateTime, 'T')">
+                        <xsl:value-of select="normalize-space(substring-before(gmd:dateStamp/gco:DateTime, 'T'))" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="normalize-space(gmd:dateStamp/gco:DateTime)" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </pubDate>
+        </xsl:if>
             
         <!-- Add the language -->
         <xsl:if test="gmd:language/gco:CharacterString != ''">
