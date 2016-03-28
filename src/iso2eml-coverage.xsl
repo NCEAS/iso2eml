@@ -25,115 +25,113 @@
 		<!-- Add EML geographic and temporal coverages, if available -->
 		<coverage>
 			<!-- Add geographic coverages -->
-			<xsl:apply-templates select=".//gmd:EX_Extent/gmd:geographicElement" />
+            <xsl:variable name="bboxCount" select="count(.//gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox)" />
+            <xsl:variable name="descriptionCount" select="count(.//gmd:EX_Extent/gmd:description)" />
+            <xsl:variable name="exDescCount" select="count(.//gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicDescription)" />
+            <xsl:choose>
+                <xsl:when test="($descriptionCount + $exDescCount) &gt; $bboxCount">
+
+                    <xsl:variable name="descriptions" >
+                        <xsl:if test="//gmd:EX_Extent/gmd:description">
+                            <xsl:for-each select=".//gmd:EX_Extent">
+                                <xsl:copy-of select="gmd:description" />
+                                <xsl:value-of select="'. '" />                                                           
+                            </xsl:for-each>                            
+                        </xsl:if>
+                    </xsl:variable>
+
+                    <xsl:variable name="codeDescriptions" >
+                        <xsl:for-each select=".//gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicDescription">
+                            <xsl:value-of select="gmd:geographicIdentifier/gmd:MD_Identifier/gmd:code/gco:CharacterString" />
+                                <xsl:if test="count(//gmd:EX_GeographicDescription) &gt; 1">
+                                    <xsl:value-of select="', '" />
+                                </xsl:if>
+                        </xsl:for-each>
+                    </xsl:variable>
+                            			
+                    <xsl:apply-templates select=".//gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox">
+        			    <xsl:with-param name="allDescriptions" select="concat($descriptions, $codeDescriptions)" />
+        			</xsl:apply-templates> 
+                </xsl:when>
+                <xsl:otherwise>
+                    
+                </xsl:otherwise>                
+            </xsl:choose>
 			
 			<!-- Add temporal coverages -->
 			<xsl:apply-templates select=".//gmd:EX_Extent/gmd:temporalElement" />
 			
 		</coverage>
 	</xsl:template>
-	
-	<!-- Handle geographic coverage elements -->
-	<xsl:template name="geographicCoverage" match="gmd:EX_Extent/gmd:geographicElement">
+		
+	<!-- Handle geographic bounding boxes -->
+	<xsl:template match="gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox">
+        <xsl:param name="allDescriptions" />
 		<xsl:comment>Geographic coverage</xsl:comment>
 		<!-- Handle geographic description -->
 		<xsl:choose>
-			<xsl:when test="not(../gmd:description)" >
-				<!-- No parent description, look for other characterization -->
-				<!-- Do we have a code list in a geographic identifier? -->
-				<xsl:choose>
-					<xsl:when test=".//gmd:geographicIdentifier/gmd:MD_Identifier/gmd:code">
-						
-						<!-- Use the code list in the description -->
-						<geographicCoverage>
-							<geographicDescription>
-								<xsl:value-of select="normalize-space(.//gmd:geographicIdentifier/gmd:MD_Identifier/gmd:code/gco:CharacterString)" />
-							</geographicDescription>
-							<xsl:apply-templates select="../gmd:geographicElement/gmd:EX_GeographicBoundingBox" />
-						</geographicCoverage>
-						
-					</xsl:when>
-					<xsl:otherwise>
-						
-						<!-- Make up a description from the bounding box -->
-						<xsl:if test=".//gmd:EX_GeographicBoundingBox">
-							
-							<geographicCoverage>
-								<geographicDescription>
-									<xsl:text>This research took place in the area bounded by: </xsl:text>
-									<xsl:value-of select="normalize-space(gmd:EX_GeographicBoundingBox/gmd:westBoundLongitude/gco:Decimal)" />
-									<xsl:text> West,</xsl:text>
-									<xsl:value-of select="normalize-space(gmd:EX_GeographicBoundingBox/gmd:eastBoundLongitude/gco:Decimal)" />
-									<xsl:text> East,</xsl:text>
-									<xsl:value-of select="normalize-space(gmd:EX_GeographicBoundingBox/gmd:northBoundLatitude/gco:Decimal)" />
-									<xsl:text> North,</xsl:text>
-									<xsl:value-of select="normalize-space(gmd:EX_GeographicBoundingBox/gmd:southBoundLatitude/gco:Decimal)" />
-									<xsl:text> South.</xsl:text>
-								</geographicDescription>
-								<xsl:apply-templates select="../gmd:geographicElement/gmd:EX_GeographicBoundingBox" />
-							</geographicCoverage>
-							
-						</xsl:if>
-					</xsl:otherwise>
-				</xsl:choose>
+			<xsl:when test="$allDescriptions != ''">
+				
+        		<geographicCoverage>
+        			<geographicDescription>
+        				<xsl:value-of select="$allDescriptions" />
+        			</geographicDescription>
+        			<xsl:apply-templates select="../gmd:geographicElement/gmd:EX_GeographicBoundingBox" />
+            		<!-- Add bounding coordinates -->
+            		<boundingCoordinates>
+            			<westBoundingCoordinate>
+            				<xsl:value-of select="normalize-space(gmd:westBoundLongitude/gco:Decimal)" />
+            			</westBoundingCoordinate>
+            			<eastBoundingCoordinate>
+            				<xsl:value-of select="normalize-space(gmd:eastBoundLongitude/gco:Decimal)" />
+            			</eastBoundingCoordinate>
+            			<northBoundingCoordinate>
+            				<xsl:value-of select="normalize-space(gmd:northBoundLatitude/gco:Decimal)" />
+            			</northBoundingCoordinate>
+            			<southBoundingCoordinate>
+            				<xsl:value-of select="normalize-space(gmd:southBoundLatitude/gco:Decimal)" />
+            			</southBoundingCoordinate>
+            		</boundingCoordinates>
+        		</geographicCoverage>
+				
 			</xsl:when>
 			<xsl:otherwise>
-				<!-- Has a parent description, use it in each geographicCoverage -->
-				<!-- Do we have a bounding box? -->
-				<xsl:comment>We have a parent description</xsl:comment>
-				<xsl:choose>
-					<xsl:when test="gmd:EX_GeographicBoundingBox">
-						<xsl:comment>We have a bounding box</xsl:comment>
-						<!-- Add the parent description and bounding box -->
-						<geographicCoverage>
-							<geographicDescription>
-								<xsl:value-of select="normalize-space(../description)" />
-							</geographicDescription>
-							<xsl:apply-templates select=".//gmd:EX_GeographicBoundingBox" />
-						</geographicCoverage>
-						
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:comment>NO bounding box</xsl:comment>
-						
-						<!-- Make up a bounding box since it is required -->
-						<geographicCoverage>
-							<geographicDescription>
-								<xsl:value-of select="normalize-space(../description)" />
-							</geographicDescription>
-							<boundingCoordinates>
-								<westBoundingCoordinate>0</westBoundingCoordinate>
-								<eastBoundingCoordinate>0</eastBoundingCoordinate>
-								<northBoundingCoordinate>0</northBoundingCoordinate>
-								<southBoundingCoordinate>0</southBoundingCoordinate>
-							</boundingCoordinates>
-						</geographicCoverage>
-						
-					</xsl:otherwise>
-				</xsl:choose>
 				
+				<!-- Make up a description from the bounding box -->
+				<xsl:if test=".//gmd:EX_GeographicBoundingBox">
+					
+					<geographicCoverage>
+						<geographicDescription>
+							<xsl:text>This research took place in the area bounded by: </xsl:text>
+							<xsl:value-of select="normalize-space(gmd:EX_GeographicBoundingBox/gmd:westBoundLongitude/gco:Decimal)" />
+							<xsl:text> West,</xsl:text>
+							<xsl:value-of select="normalize-space(gmd:EX_GeographicBoundingBox/gmd:eastBoundLongitude/gco:Decimal)" />
+							<xsl:text> East,</xsl:text>
+							<xsl:value-of select="normalize-space(gmd:EX_GeographicBoundingBox/gmd:northBoundLatitude/gco:Decimal)" />
+							<xsl:text> North,</xsl:text>
+							<xsl:value-of select="normalize-space(gmd:EX_GeographicBoundingBox/gmd:southBoundLatitude/gco:Decimal)" />
+							<xsl:text> South.</xsl:text>
+						</geographicDescription>
+                		<!-- Add bounding coordinates -->
+                		<boundingCoordinates>
+                			<westBoundingCoordinate>
+                				<xsl:value-of select="normalize-space(gmd:westBoundLongitude/gco:Decimal)" />
+                			</westBoundingCoordinate>
+                			<eastBoundingCoordinate>
+                				<xsl:value-of select="normalize-space(gmd:eastBoundLongitude/gco:Decimal)" />
+                			</eastBoundingCoordinate>
+                			<northBoundingCoordinate>
+                				<xsl:value-of select="normalize-space(gmd:northBoundLatitude/gco:Decimal)" />
+                			</northBoundingCoordinate>
+                			<southBoundingCoordinate>
+                				<xsl:value-of select="normalize-space(gmd:southBoundLatitude/gco:Decimal)" />
+                			</southBoundingCoordinate>
+                		</boundingCoordinates>
+					</geographicCoverage>
+					
+				</xsl:if>
 			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:template>
-	
-	<!-- Handle geographic bounding boxes -->
-	<xsl:template name="boundingCoordinates" match="gmd:EX_GeographicBoundingBox">
-		
-		<!-- Add bounding coordinates -->
-		<boundingCoordinates>
-			<westBoundingCoordinate>
-				<xsl:value-of select="normalize-space(gmd:westBoundLongitude/gco:Decimal)" />
-			</westBoundingCoordinate>
-			<eastBoundingCoordinate>
-				<xsl:value-of select="normalize-space(gmd:eastBoundLongitude/gco:Decimal)" />
-			</eastBoundingCoordinate>
-			<northBoundingCoordinate>
-				<xsl:value-of select="normalize-space(gmd:northBoundLatitude/gco:Decimal)" />
-			</northBoundingCoordinate>
-			<southBoundingCoordinate>
-				<xsl:value-of select="normalize-space(gmd:southBoundLatitude/gco:Decimal)" />
-			</southBoundingCoordinate>
-		</boundingCoordinates>
+		</xsl:choose>		
 	</xsl:template>
 	
 	<!-- Handle temporal coverage elements -->
