@@ -76,6 +76,13 @@
             </xsl:call-template>
         </xsl:if>
 
+        <!-- Add any gmd:topicCategory fields as keywords too -->
+        <xsl:if test="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:topicCategory != ''">
+            <xsl:call-template name="topics">
+                <xsl:with-param name="topics" select="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:topicCategory" />
+            </xsl:call-template>
+        </xsl:if>
+
         <!-- Add intellectual rights -->
         <!-- 
             Note these rules are specific to the arcticdata.io content, 
@@ -163,6 +170,21 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:if>
+        </keywordSet>
+    </xsl:for-each>
+</xsl:template>
+
+<!-- Process Topics -->
+<xsl:template name="topics">
+    <xsl:param name = "topics" />
+    <xsl:for-each select="$topics">
+        <keywordSet>    
+            <xsl:for-each select="./gmd:MD_TopicCategoryCode">
+                <keyword>
+                    <xsl:value-of select="normalize-space(.)" />
+                </keyword>
+            </xsl:for-each>
+            <keywordThesaurus>ISO 19115:2003 MD_TopicCategoryCode</keywordThesaurus>
         </keywordSet>
     </xsl:for-each>
 </xsl:template>
