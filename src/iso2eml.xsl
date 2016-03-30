@@ -18,6 +18,7 @@
 
 <xsl:import href="iso2eml-party.xsl"/>
 <xsl:import href="iso2eml-coverage.xsl"/>
+<xsl:import href="iso2eml-project.xsl"/>
 
 <xsl:output method="xml" encoding="UTF-8" indent="yes" />
 <xsl:strip-space elements="*" />
@@ -131,6 +132,9 @@
         <!-- Add the methods   -->
         
         <!-- Add the project   -->
+        <xsl:call-template name="project">
+            <xsl:with-param name="doc" select="." />
+        </xsl:call-template>
         
         <!-- Add entities      -->
         
