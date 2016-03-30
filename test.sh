@@ -4,12 +4,12 @@
 
 TEST="tests/iso"
 TARGET=build
-ISOBASE="iso-0"
-EMLBASE="eml-0"
+ISOBASE="iso-"
+EMLBASE="eml-"
 
 mkdir -p $TARGET
 
-for num in 1 2 3 4 5 6 7 8 9
+for num in 01 02 03 04 05 06 07 08 09 10
 do
     xml tr src/iso2eml.xsl $TEST/$ISOBASE${num}.xml > $TARGET/${EMLBASE}${num}.xml
 done

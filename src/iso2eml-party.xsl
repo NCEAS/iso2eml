@@ -119,6 +119,26 @@
                 </creator>
             </xsl:for-each>
         </xsl:when>
+        <!-- Alternatively, add pointOfContact from the citation in the document -->
+        <xsl:when test='$doc/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="pointOfContact"]] != "" '>
+            <xsl:for-each select='$doc/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="pointOfContact"]]'>
+                <creator>
+                    <xsl:call-template name="party">
+                        <xsl:with-param name="party" select = "." />
+                    </xsl:call-template>
+                </creator>
+            </xsl:for-each>
+        </xsl:when>
+        <!-- Alternatively, add pointOfContact from anywhere in the document -->
+        <xsl:when test='$doc//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="pointOfContact"]] != "" '>
+            <xsl:for-each select='$doc//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="pointOfContact"]]'>
+                <creator>
+                    <xsl:call-template name="party">
+                        <xsl:with-param name="party" select = "." />
+                    </xsl:call-template>
+                </creator>
+            </xsl:for-each>
+        </xsl:when>
         <!-- Finally, if all else fails, add the Arctic Data Center -->
         <xsl:otherwise>
             <creator>
@@ -132,6 +152,7 @@
 <xsl:template name="contacts">
     <xsl:param name = "doc" />
     <xsl:choose>
+        <!-- Add contacts from the citation in the document -->
         <xsl:when test='$doc/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="pointOfContact"]]!=""'>
             <xsl:for-each select='gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="pointOfContact"]]'>
                 <contact>
