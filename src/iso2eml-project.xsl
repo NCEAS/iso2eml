@@ -30,11 +30,16 @@
                 <!-- Add the project title -->
                 <title><xsl:value-of select="normalize-space(./gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:title[1]/gco:CharacterString)"/></title>
 
+                <!-- Add the project abstract -->
+                <xsl:if test='./gmd:identificationInfo/gmd:MD_DataIdentification/gmd:abstract[1]/gco:CharacterString != ""'>
+                    <abstract><xsl:value-of select="normalize-space(./gmd:identificationInfo/gmd:MD_DataIdentification/gmd:abstract[1]/gco:CharacterString)"/></abstract>
+                </xsl:if>
+
                 <!-- Add personnel from the PI list or the author list -->
                 <xsl:choose>
                     <!-- Select PIs from the citation -->
-                    <xsl:when test='$doc/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="principalInvestigator"]]!=""'>
-                        <xsl:for-each select='gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="principalInvestigator"]]'>
+                    <xsl:when test='$doc/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="principalInvestigator" or @codeListValue="coPrincipalInvestigator" or @codeListValue="collaboratingPrincipalInvestigator"]]!=""'>
+                        <xsl:for-each select='gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="principalInvestigator" or @codeListValue="coPrincipalInvestigator" or @codeListValue="collaboratingPrincipalInvestigator"]]'>
                             <personnel>
                                 <xsl:call-template name="party">
                                     <xsl:with-param name="party" select = "." />
@@ -44,8 +49,8 @@
                         </xsl:for-each>
                     </xsl:when>
                     <!-- Alternatively, select PIs from anywhere in the doc -->
-                    <xsl:when test='$doc//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="principalInvestigator"]] != ""'>
-                        <xsl:for-each select='$doc//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="principalInvestigator"]]'>
+                    <xsl:when test='$doc//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="principalInvestigator" or @codeListValue="coPrincipalInvestigator" or @codeListValue="collaboratingPrincipalInvestigator"]] != ""'>
+                        <xsl:for-each select='$doc//gmd:CI_ResponsibleParty[gmd:role/gmd:CI_RoleCode[@codeListValue="principalInvestigator" or @codeListValue="coPrincipalInvestigator" or @codeListValue="collaboratingPrincipalInvestigator"]]'>
                             <personnel>
                                 <xsl:call-template name="party">
                                     <xsl:with-param name="party" select = "." />
